@@ -1,0 +1,16 @@
+export interface Matchday {
+  id: string;
+  matchday: number;
+  startDate: string;
+  endDate: string;
+  fixtures: { [key: string]: Fixture };
+}
+
+export interface Fixture {
+  id: string;
+  kickOffTime: string;
+  homeTeamId: string;
+  awayTeamId: string;
+  goalsHome: number;
+  goalsAway: number;
+}
