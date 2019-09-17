@@ -32,7 +32,6 @@ export default class App extends React.Component<{}, AppState> {
 
   getTableData = (): Promise<AppState> =>
     fetch(
-      // 'http://localhost:5000/soccer-table-c68e5/us-central1/getTableData?country=england&league=england&year=2019',
       'https://us-central1-soccer-table-c68e5.cloudfunctions.net/getTableData?country=england&league=england&year=2019',
     ).then(res => res.json());
 
