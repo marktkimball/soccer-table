@@ -70,6 +70,10 @@ export default class Table extends React.Component<TableProps, TableState> {
     return (
       <div className="table-container">
         <h1 className="league-header">English Premier League - 2019/2020</h1>
+        <p>
+          Analyze how teams performed within a range of matchdays be adjusting
+          the beginning and ending matchday with the dropdowns below.
+        </p>
         <div className="filter-selectors-container">
           <label htmlFor="begin-selector" className="matchday-selector-label">
             Beginning Matchday:
@@ -156,14 +160,16 @@ export default class Table extends React.Component<TableProps, TableState> {
         <div className="key">
           <h4>Key</h4>
           <div className="key-container">
-            <div className="key-item champions-league-key" />{' '}
+            <div className="key-item champions-league-key" />
             <p>Champions League</p>
           </div>
           <div className="key-container">
-            <div className="key-item uefa-league-key" /> <p>UEFA League</p>
+            <div className="key-item uefa-league-key" />
+            <p>UEFA League</p>
           </div>
           <div className="key-container">
-            <div className="key-item regulation-key" /> <p>Regulation</p>
+            <div className="key-item relegation-key" />
+            <p>Relegation</p>
           </div>
         </div>
       </div>

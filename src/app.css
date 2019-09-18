@@ -1,0 +1,14 @@
+.app {
+  background: #f5f5f5;
+  padding: 24px 0;
+}
+
+.app.england {
+  background: linear-gradient(
+    125deg,
+    #04f5ff 0%,
+    #00ff85 50%,
+    #38003c 80%,
+    #e90052 100%
+  );
+}

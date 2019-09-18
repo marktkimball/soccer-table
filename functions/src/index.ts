@@ -6,7 +6,35 @@ const cors = require('cors')({
 });
 const serviceAccount = require('../service-account.json');
 
-export const getTableData = functions.https.onRequest((req, res) => {
+const getTeamsForLeagueYear = async (
+  db: admin.database.Database,
+  country: string,
+  year: string,
+) => {
+  const teamIds = await db
+    .ref(`/leagues/${country}/${year}/teamIds`)
+    .once('value')
+    .then(teamIdsSnapshot => Object.keys(teamIdsSnapshot.val()));
+
+  return await db
+    .ref(`/teams/${country}`)
+    .once('value')
+    .then(teamSnapshot => {
+      const teams = teamSnapshot.val();
+
+      return Object.keys(teams)
+        .filter(id => teamIds.includes(id))
+        .reduce(
+          (filteredTeams, teamId) => ({
+            ...filteredTeams,
+            [teamId]: teams[teamId],
+          }),
+          {},
+        );
+    });
+};
+
+export const getTableData = functions.https.onRequest(async (req, res) => {
   const { country, league, year } = req.query;
 
   if (!admin.apps.length) {
@@ -17,26 +45,21 @@ export const getTableData = functions.https.onRequest((req, res) => {
   }
   const db = admin.database();
 
+  const teams = await getTeamsForLeagueYear(db, country, year);
+
   return cors(req, res, () =>
     db
-      .ref(`/teams/${country}`)
+      .ref(`/matchdays/${league}/${year}`)
       .once('value')
-      .then(snapshot => {
-        const teams = snapshot.val();
+      .then(matchdaySnapshot => {
+        const matchdays = matchdaySnapshot.val();
+        const totalMatchdays = Object.keys(matchdays).length;
 
-        return db
-          .ref(`/matchdays/${league}/${year}`)
-          .once('value')
-          .then(matchdaySnapshot => {
-            const matchdays = matchdaySnapshot.val();
-            const totalMatchdays = Object.keys(matchdays).length;
-
-            res.status(200).send({
-              matchdays,
-              teams,
-              totalMatchdays,
-            });
-          });
+        res.status(200).send({
+          matchdays,
+          teams,
+          totalMatchdays,
+        });
       }),
   );
 });
