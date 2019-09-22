@@ -6,17 +6,24 @@ const cors = require('cors')({
 });
 const serviceAccount = require('../service-account.json');
 
-const getTeamsForLeagueYear = async (
+const getLeagueData = async (
   db: admin.database.Database,
   country: string,
   year: string,
 ) => {
-  const teamIds = await db
-    .ref(`/leagues/${country}/${year}/teamIds`)
+  const {
+    qualificationTypes,
+    teamIds: teamIdsObject,
+  }: {
+    qualificationTypes: { [key: string]: { [key: string]: number } };
+    teamIds: { [key: string]: string };
+  } = await db
+    .ref(`/leagues/${country}/${year}`)
     .once('value')
-    .then(teamIdsSnapshot => Object.keys(teamIdsSnapshot.val()));
+    .then(leaugeSnapshot => leaugeSnapshot.val());
 
-  return await db
+  const teamIds = Object.keys(teamIdsObject);
+  const formattedTeams: { [key: string]: any } = await db
     .ref(`/teams/${country}`)
     .once('value')
     .then(teamSnapshot => {
@@ -32,6 +39,17 @@ const getTeamsForLeagueYear = async (
           {},
         );
     });
+
+  const formattedQualificationTypes: { [key: string]: number[] } = {};
+
+  for (const [key, val] of Object.entries(qualificationTypes)) {
+    formattedQualificationTypes[key] = Object.values(val);
+  }
+
+  return {
+    qualificationTypes: formattedQualificationTypes,
+    teams: formattedTeams,
+  };
 };
 
 export const getTableData = functions.https.onRequest(async (req, res) => {
@@ -45,7 +63,7 @@ export const getTableData = functions.https.onRequest(async (req, res) => {
   }
   const db = admin.database();
 
-  const teams = await getTeamsForLeagueYear(db, country, year);
+  const { qualificationTypes, teams } = await getLeagueData(db, country, year);
 
   return cors(req, res, () =>
     db
@@ -57,6 +75,7 @@ export const getTableData = functions.https.onRequest(async (req, res) => {
 
         res.status(200).send({
           matchdays,
+          qualificationTypes,
           teams,
           totalMatchdays,
         });

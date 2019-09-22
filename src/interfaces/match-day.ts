@@ -3,7 +3,7 @@ export interface Matchday {
   matchday: number;
   startDate: string;
   endDate: string;
-  fixtures: { [key: string]: Fixture };
+  fixtures: { [fixtureId: string]: Fixture };
 }
 
 export interface Fixture {

@@ -1,7 +1,9 @@
 import React from 'react';
 import pickBy from 'lodash/pickBy';
+import memoize from 'memoize-one';
 import './table.css';
 import { Matchday } from '../../interfaces/match-day';
+import { QualificationTypes } from '../../interfaces/qualification-types';
 import { Team } from '../../interfaces/team';
 import { TeamStats } from '../../interfaces/team-stats';
 import { getTable } from '../../utils/get-table';
@@ -9,12 +11,13 @@ import { getTable } from '../../utils/get-table';
 interface TableState {
   beginMatchday: number;
   endMatchday: number;
-  filteredTable: TeamStats[];
 }
 
 interface TableProps {
-  matchdays: { [key: string]: Matchday };
-  teams: { [key: string]: Team };
+  league: string;
+  matchdays: { [matchdayId: string]: Matchday };
+  qualificationTypes: QualificationTypes;
+  teams: { [teamId: string]: Team };
   totalMatchdays: number;
 }
 
@@ -22,54 +25,86 @@ export default class Table extends React.Component<TableProps, TableState> {
   state = {
     beginMatchday: 1,
     endMatchday: this.props.totalMatchdays,
-    filteredTable: [],
   };
 
-  componentDidMount() {
-    const filteredTable = getTable(this.props.matchdays, this.props.teams);
-    this.setState({ filteredTable });
-  }
+  filter = memoize((matchdays, teams) => getTable(matchdays, teams));
+
+  getLeagueName = (league: string) => {
+    switch (league) {
+      case 'spain':
+        return 'La Liga';
+      case 'england':
+      default:
+        return 'English Premier League';
+    }
+  };
+
+  getQualificationClass = (index: number) => {
+    const {
+      qualificationTypes: {
+        championsLeagueGroup,
+        europaLeagueGroup,
+        europaLeagueQualifiers,
+        relegation,
+      },
+    } = this.props;
+
+    if (championsLeagueGroup && championsLeagueGroup.includes(index)) {
+      return 'champions-league-group';
+    }
+
+    if (europaLeagueGroup && europaLeagueGroup.includes(index)) {
+      return 'europa-league-group';
+    }
+
+    if (europaLeagueQualifiers && europaLeagueQualifiers.includes(index)) {
+      return 'europa-league-qualifiers';
+    }
+
+    if (relegation && relegation.includes(index)) {
+      return 'relegation';
+    }
+
+    return '';
+  };
 
   handleBeginMatchdayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { endMatchday } = this.state;
     const beginMatchday = +event.currentTarget.value;
     const setEndMatchday = beginMatchday > endMatchday;
 
-    this.setState(
-      {
-        beginMatchday,
-        endMatchday: setEndMatchday ? beginMatchday : endMatchday,
-      },
-      this.updateTable,
-    );
+    this.setState({
+      beginMatchday,
+      endMatchday: setEndMatchday ? beginMatchday : endMatchday,
+    });
   };
 
   handleEndMatchdayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    this.setState(
-      { endMatchday: +event.currentTarget.value },
-      this.updateTable,
-    );
+    this.setState({ endMatchday: +event.currentTarget.value });
   };
 
-  updateTable = () => {
+  render() {
     const { beginMatchday, endMatchday } = this.state;
-    const { matchdays, teams } = this.props;
+    const {
+      league,
+      matchdays,
+      qualificationTypes,
+      teams,
+      totalMatchdays,
+    } = this.props;
+    const matchdayArray = [...Array(totalMatchdays)];
+
     const filteredMatchdays = pickBy(
       matchdays,
       ({ matchday }) => matchday >= beginMatchday && matchday <= endMatchday,
     );
-
-    this.setState({ filteredTable: getTable(filteredMatchdays, teams) });
-  };
-
-  render() {
-    const { beginMatchday, endMatchday, filteredTable } = this.state;
-    const { teams, totalMatchdays } = this.props;
-    const matchdayArray = [...Array(totalMatchdays)];
+    const filteredTable: TeamStats[] = this.filter(filteredMatchdays, teams);
 
     return (
-      <div className="table-container">
-        <h1 className="league-header">English Premier League - 2019/2020</h1>
+      <>
+        <h1 className="league-header">
+          {this.getLeagueName(league)} - 2019/2020
+        </h1>
         <p>
           Analyze how teams performed within a range of matchdays be adjusting
           the beginning and ending matchday with the dropdowns below.
@@ -129,9 +164,13 @@ export default class Table extends React.Component<TableProps, TableState> {
               index: number,
             ) => {
               const team = teams[teamId];
+              const qualificationClass = this.getQualificationClass(index + 1);
 
               return (
-                <div key={teamId} className="table-row club-row">
+                <div
+                  key={teamId}
+                  className={`table-row club-row ${qualificationClass}`}
+                >
                   <div className="position">{index + 1}</div>
                   <div className="team-name">
                     <img
@@ -164,15 +203,21 @@ export default class Table extends React.Component<TableProps, TableState> {
             <p>Champions League</p>
           </div>
           <div className="key-container">
-            <div className="key-item uefa-league-key" />
-            <p>UEFA League</p>
+            <div className="key-item europa-league-group-key" />
+            <p>Europa League Group</p>
           </div>
+          {qualificationTypes.europaLeagueQualifiers && (
+            <div className="key-container">
+              <div className="key-item europa-league-qualifiers-key" />
+              <p>Europa League Qualifiers</p>
+            </div>
+          )}
           <div className="key-container">
             <div className="key-item relegation-key" />
             <p>Relegation</p>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }
