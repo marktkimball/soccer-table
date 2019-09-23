@@ -8,6 +8,7 @@ import { QualificationTypes } from './interfaces/qualification-types';
 import { Team } from './interfaces/team';
 
 interface AppState {
+  beginMatchday: number;
   cachedTableData: {
     [country: string]: {
       [year: string]: {
@@ -18,6 +19,7 @@ interface AppState {
       };
     };
   };
+  endMatchday: number;
   leagues: string[];
   loaded: boolean;
   matchdays: { [matchdayId: string]: Matchday };
@@ -37,7 +39,9 @@ interface FetchResponse {
 
 export default class App extends React.Component<{}, AppState> {
   state: AppState = {
+    beginMatchday: 1,
     cachedTableData: {},
+    endMatchday: 1,
     leagues: ['england', 'spain'],
     loaded: false,
     matchdays: {},
@@ -62,6 +66,7 @@ export default class App extends React.Component<{}, AppState> {
     } = await this.getTableData(selectedLeague, year);
 
     this.setState({
+      beginMatchday: 1,
       cachedTableData: {
         ...cachedTableData,
         [selectedLeague]: {
@@ -73,6 +78,7 @@ export default class App extends React.Component<{}, AppState> {
           },
         },
       },
+      endMatchday: totalMatchdays,
       loaded: true,
       matchdays,
       qualificationTypes,
@@ -101,8 +107,25 @@ export default class App extends React.Component<{}, AppState> {
     ).then(res => res.json());
   };
 
+  handleBeginMatchdayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { endMatchday } = this.state;
+    const beginMatchday = +event.currentTarget.value;
+    const setEndMatchday = beginMatchday > endMatchday;
+
+    this.setState({
+      beginMatchday,
+      endMatchday: setEndMatchday ? beginMatchday : endMatchday,
+    });
+  };
+
+  handleEndMatchdayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    this.setState({ endMatchday: +event.currentTarget.value });
+  };
+
   render() {
     const {
+      beginMatchday,
+      endMatchday,
       leagues,
       loaded,
       matchdays,
@@ -122,6 +145,10 @@ export default class App extends React.Component<{}, AppState> {
               selectedLeague={selectedLeague}
             />
             <Table
+              beginMatchday={beginMatchday}
+              endMatchday={endMatchday}
+              handleBeginMatchdayChange={this.handleBeginMatchdayChange}
+              handleEndMatchdayChange={this.handleEndMatchdayChange}
               league={selectedLeague}
               matchdays={matchdays}
               qualificationTypes={qualificationTypes}

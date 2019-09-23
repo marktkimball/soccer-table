@@ -8,12 +8,15 @@ import { Team } from '../../interfaces/team';
 import { TeamStats } from '../../interfaces/team-stats';
 import { getTable } from '../../utils/get-table';
 
-interface TableState {
+interface TableProps {
   beginMatchday: number;
   endMatchday: number;
-}
-
-interface TableProps {
+  handleBeginMatchdayChange: (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => void;
+  handleEndMatchdayChange: (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => void;
   league: string;
   matchdays: { [matchdayId: string]: Matchday };
   qualificationTypes: QualificationTypes;
@@ -21,12 +24,7 @@ interface TableProps {
   totalMatchdays: number;
 }
 
-export default class Table extends React.Component<TableProps, TableState> {
-  state = {
-    beginMatchday: 1,
-    endMatchday: this.props.totalMatchdays,
-  };
-
+export default class Table extends React.Component<TableProps, {}> {
   filter = memoize((matchdays, teams) => getTable(matchdays, teams));
 
   getLeagueName = (league: string) => {
@@ -68,32 +66,20 @@ export default class Table extends React.Component<TableProps, TableState> {
     return '';
   };
 
-  handleBeginMatchdayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { endMatchday } = this.state;
-    const beginMatchday = +event.currentTarget.value;
-    const setEndMatchday = beginMatchday > endMatchday;
-
-    this.setState({
-      beginMatchday,
-      endMatchday: setEndMatchday ? beginMatchday : endMatchday,
-    });
-  };
-
-  handleEndMatchdayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    this.setState({ endMatchday: +event.currentTarget.value });
-  };
-
   render() {
-    const { beginMatchday, endMatchday } = this.state;
     const {
+      beginMatchday,
+      endMatchday,
+      handleBeginMatchdayChange,
+      handleEndMatchdayChange,
       league,
       matchdays,
       qualificationTypes,
       teams,
       totalMatchdays,
     } = this.props;
-    const matchdayArray = [...Array(totalMatchdays)];
 
+    const matchdayArray = [...Array(totalMatchdays)];
     const filteredMatchdays = pickBy(
       matchdays,
       ({ matchday }) => matchday >= beginMatchday && matchday <= endMatchday,
@@ -115,7 +101,7 @@ export default class Table extends React.Component<TableProps, TableState> {
             <select
               id="begin-selector"
               className="matchday-selector"
-              onChange={this.handleBeginMatchdayChange}
+              onChange={handleBeginMatchdayChange}
               value={beginMatchday}
             >
               {matchdayArray.map((e, i) => (
@@ -130,7 +116,7 @@ export default class Table extends React.Component<TableProps, TableState> {
             <select
               id="end-selector"
               className="matchday-selector"
-              onChange={this.handleEndMatchdayChange}
+              onChange={handleEndMatchdayChange}
               value={endMatchday}
             >
               {matchdayArray.map((e, i) => (
