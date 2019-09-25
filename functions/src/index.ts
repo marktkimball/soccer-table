@@ -70,11 +70,11 @@ export const getTableData = functions.https.onRequest(async (req, res) => {
       .ref(`/matchdays/${league}/${year}`)
       .once('value')
       .then(matchdaySnapshot => {
-        const matchdays = matchdaySnapshot.val();
         if (matchdaySnapshot.exists()) {
+          const matchdays = matchdaySnapshot.val();
           const totalMatchdays = Object.keys(matchdays).length;
 
-          res.status(200).send({
+          return res.status(200).send({
             matchdays,
             qualificationTypes,
             teams,
@@ -82,7 +82,7 @@ export const getTableData = functions.https.onRequest(async (req, res) => {
           });
         }
 
-        res.status(200).send({
+        return res.status(200).send({
           matchdays: {},
           qualificationTypes,
           teams,
