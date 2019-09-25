@@ -3,4 +3,5 @@ export interface QualificationTypes {
   europaLeagueGroup?: number[];
   europaLeagueQualifiers?: number[];
   relegation?: number[];
+  relegationPlayoff?: number[];
 }

@@ -71,13 +71,22 @@ export const getTableData = functions.https.onRequest(async (req, res) => {
       .once('value')
       .then(matchdaySnapshot => {
         const matchdays = matchdaySnapshot.val();
-        const totalMatchdays = Object.keys(matchdays).length;
+        if (matchdaySnapshot.exists()) {
+          const totalMatchdays = Object.keys(matchdays).length;
+
+          res.status(200).send({
+            matchdays,
+            qualificationTypes,
+            teams,
+            totalMatchdays,
+          });
+        }
 
         res.status(200).send({
-          matchdays,
+          matchdays: {},
           qualificationTypes,
           teams,
-          totalMatchdays,
+          totalMatchdays: 0,
         });
       }),
   );

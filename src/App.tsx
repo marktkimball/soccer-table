@@ -42,7 +42,7 @@ export default class App extends React.Component<{}, AppState> {
     beginMatchday: 1,
     cachedTableData: {},
     endMatchday: 1,
-    leagues: ['england', 'spain'],
+    leagues: ['england', 'spain', 'germany'],
     loaded: false,
     matchdays: {},
     qualificationTypes: {},
@@ -136,7 +136,7 @@ export default class App extends React.Component<{}, AppState> {
     } = this.state;
 
     return (
-      <div className={`app ${loaded ? 'england' : ''}`}>
+      <div className={`app ${loaded ? selectedLeague : ''}`}>
         {loaded ? (
           <div className="main-container">
             <LeagueSelector

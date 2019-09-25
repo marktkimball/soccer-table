@@ -17,6 +17,38 @@
   );
 }
 
+.app.spain {
+  background: radial-gradient(
+      circle at top right,
+      rgba(255, 0, 0, 1),
+      rgba(255, 0, 0, 0) 75%
+    ),
+    radial-gradient(
+      circle at center right,
+      rgba(255, 230, 0, 1),
+      rgba(255, 230, 0, 0) 75%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(0, 170, 0, 1),
+      rgba(0, 170, 0, 0) 75%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(0, 73, 208, 1),
+      rgba(0, 73, 208, 0) 75%
+    ),
+    radial-gradient(
+      circle at top left,
+      rgba(144, 20, 128, 1),
+      rgba(144, 20, 128, 0) 75%
+    );
+}
+
+.app.germany {
+  background: linear-gradient(45deg, #d3010c 33%, #fff 66%, #000 95%);
+}
+
 .main-container {
   background: #fafafa;
   border-radius: 4px;

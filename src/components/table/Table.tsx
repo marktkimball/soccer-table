@@ -29,11 +29,13 @@ export default class Table extends React.Component<TableProps, {}> {
 
   getLeagueName = (league: string) => {
     switch (league) {
+      case 'germany':
+        return 'Bundesliga';
       case 'spain':
         return 'La Liga';
       case 'england':
       default:
-        return 'English Premier League';
+        return 'Premier League';
     }
   };
 
@@ -44,6 +46,7 @@ export default class Table extends React.Component<TableProps, {}> {
         europaLeagueGroup,
         europaLeagueQualifiers,
         relegation,
+        relegationPlayoff,
       },
     } = this.props;
 
@@ -57,6 +60,10 @@ export default class Table extends React.Component<TableProps, {}> {
 
     if (europaLeagueQualifiers && europaLeagueQualifiers.includes(index)) {
       return 'europa-league-qualifiers';
+    }
+
+    if (relegationPlayoff && relegationPlayoff.includes(index)) {
+      return 'relegation-playoff';
     }
 
     if (relegation && relegation.includes(index)) {
@@ -101,6 +108,7 @@ export default class Table extends React.Component<TableProps, {}> {
             <select
               id="begin-selector"
               className="matchday-selector"
+              disabled={!totalMatchdays}
               onChange={handleBeginMatchdayChange}
               value={beginMatchday}
             >
@@ -116,6 +124,7 @@ export default class Table extends React.Component<TableProps, {}> {
             <select
               id="end-selector"
               className="matchday-selector"
+              disabled={!totalMatchdays}
               onChange={handleEndMatchdayChange}
               value={endMatchday}
             >
@@ -198,6 +207,10 @@ export default class Table extends React.Component<TableProps, {}> {
               <p>Europa League Qualifiers</p>
             </div>
           )}
+          <div className="key-container">
+            <div className="key-item relegation-playoff-key" />
+            <p>Relegation Playoff</p>
+          </div>
           <div className="key-container">
             <div className="key-item relegation-key" />
             <p>Relegation</p>
