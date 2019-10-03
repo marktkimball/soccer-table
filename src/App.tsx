@@ -42,7 +42,7 @@ export default class App extends React.Component<{}, AppState> {
     beginMatchday: 1,
     cachedTableData: {},
     endMatchday: 1,
-    leagues: ['england', 'spain', 'germany'],
+    leagues: ['england', 'spain', 'germany', 'italy', 'france'],
     loaded: false,
     matchdays: {},
     qualificationTypes: {},
@@ -53,7 +53,15 @@ export default class App extends React.Component<{}, AppState> {
   };
 
   componentDidMount() {
-    this.getAndSetTableData(this.state.selectedLeague);
+    const params = new URL(document.location.href).searchParams;
+    const countryParam = params.get('country');
+    if (countryParam) {
+      this.setState({ selectedLeague: countryParam }, () =>
+        this.getAndSetTableData(countryParam),
+      );
+    } else {
+      this.getAndSetTableData(this.state.selectedLeague);
+    }
   }
 
   getAndSetTableData = async (selectedLeague: string) => {

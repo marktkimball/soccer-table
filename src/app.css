@@ -49,6 +49,14 @@
   background: linear-gradient(45deg, #d3010c 33%, #fff 66%, #000 95%);
 }
 
+.app.italy {
+  background: linear-gradient(105deg, #002872 15%, #fff 65%, #0091d8 100%);
+}
+
+.app.france {
+  background: linear-gradient(75deg, #0a1d3d 19%, #fff 65%, #ed151e 100%);
+}
+
 .main-container {
   background: #fafafa;
   border-radius: 4px;

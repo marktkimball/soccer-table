@@ -109,6 +109,14 @@
   background: rgba(25, 118, 210, 0.1);
 }
 
+.club-row.champions-league-qualifiers {
+  border-left-color: #0097a7;
+}
+
+.club-row.champions-league-qualifiers:hover {
+  background: rgba(0, 150, 167, 0.1);
+}
+
 .club-row.europa-league-group {
   border-left-color: #512da8;
 }
@@ -227,6 +235,10 @@
 
 .champions-league-key {
   background-color: #1976d2;
+}
+
+.champions-league-qualifiers-key {
+  background-color: #0097a7;
 }
 
 .europa-league-group-key {

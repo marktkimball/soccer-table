@@ -33,6 +33,10 @@ export default class Table extends React.Component<TableProps, {}> {
         return 'Bundesliga';
       case 'spain':
         return 'La Liga';
+      case 'italy':
+        return 'Serie A';
+      case 'france':
+        return 'Ligue 1';
       case 'england':
       default:
         return 'Premier League';
@@ -43,6 +47,7 @@ export default class Table extends React.Component<TableProps, {}> {
     const {
       qualificationTypes: {
         championsLeagueGroup,
+        championsLeagueQualifiers,
         europaLeagueGroup,
         europaLeagueQualifiers,
         relegation,
@@ -52,6 +57,13 @@ export default class Table extends React.Component<TableProps, {}> {
 
     if (championsLeagueGroup && championsLeagueGroup.includes(index)) {
       return 'champions-league-group';
+    }
+
+    if (
+      championsLeagueQualifiers &&
+      championsLeagueQualifiers.includes(index)
+    ) {
+      return 'champions-league-qualifiers';
     }
 
     if (europaLeagueGroup && europaLeagueGroup.includes(index)) {
@@ -197,6 +209,12 @@ export default class Table extends React.Component<TableProps, {}> {
             <div className="key-item champions-league-key" />
             <p>Champions League</p>
           </div>
+          {qualificationTypes.championsLeagueQualifiers && (
+            <div className="key-container">
+              <div className="key-item champions-league-qualifiers-key" />
+              <p>Champions League Qualifiers</p>
+            </div>
+          )}
           <div className="key-container">
             <div className="key-item europa-league-group-key" />
             <p>Europa League Group</p>
@@ -207,10 +225,12 @@ export default class Table extends React.Component<TableProps, {}> {
               <p>Europa League Qualifiers</p>
             </div>
           )}
-          <div className="key-container">
-            <div className="key-item relegation-playoff-key" />
-            <p>Relegation Playoff</p>
-          </div>
+          {qualificationTypes.relegationPlayoff && (
+            <div className="key-container">
+              <div className="key-item relegation-playoff-key" />
+              <p>Relegation Playoff</p>
+            </div>
+          )}
           <div className="key-container">
             <div className="key-item relegation-key" />
             <p>Relegation</p>
