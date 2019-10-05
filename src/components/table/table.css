@@ -163,10 +163,17 @@
   display: none;
 }
 
-.team-logo {
+.team-logo-container {
+  display: flex;
   height: 24px;
+  justify-content: center;
   margin-right: 24px;
   width: 24px;
+}
+
+.team-logo {
+  max-height: 24px;
+  max-width: 24px;
 }
 
 .matches-played {

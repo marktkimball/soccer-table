@@ -180,11 +180,13 @@ export default class Table extends React.Component<TableProps, {}> {
                 >
                   <div className="position">{index + 1}</div>
                   <div className="team-name">
-                    <img
-                      alt={team.displayName}
-                      className="team-logo"
-                      src={require(`../../assets/logos/${team.logoSrc}`)}
-                    />
+                    <div className="team-logo-container">
+                      <img
+                        alt={team.displayName}
+                        className="team-logo"
+                        src={require(`../../assets/logos/${team.logoSrc}`)}
+                      />
+                    </div>
                     <div>
                       <div className="shortened-name">{team.shortenedName}</div>
                       <div className="full-name">{team.displayName}</div>

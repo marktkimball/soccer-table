@@ -20,9 +20,10 @@ export const LeagueSelector: React.SFC<LeagueSelectorProps> = ({
             selectedLeague === league ? 'is-selected' : ''
           }`}
           key={league}
-          onClick={event => onChange(league)}
+          onClick={() => onChange(league)}
         >
-          {league}
+          <span className="league-name">{league}</span>
+          <span className="league-name-truncated">{league.slice(0, 3)}</span>
         </button>
       ))}
     </div>

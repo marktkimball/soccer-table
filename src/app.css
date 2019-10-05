@@ -50,7 +50,12 @@
 }
 
 .app.italy {
-  background: linear-gradient(105deg, #002872 15%, #fff 65%, #0091d8 100%);
+  background: radial-gradient(
+    circle at top center,
+    #0091d8,
+    #99ddff 40%,
+    #002872 85%
+  );
 }
 
 .app.france {
