@@ -59,7 +59,7 @@
 }
 
 .app.france {
-  background: linear-gradient(75deg, #0a1d3d 19%, #fff 65%, #ed151e 100%);
+  background: linear-gradient(#dbe11f 15%, #0a1d3d, #ed151e);
 }
 
 .main-container {
