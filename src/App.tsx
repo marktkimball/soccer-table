@@ -113,8 +113,7 @@ export default class App extends React.Component<{}, AppState> {
     }
 
     return fetch(
-      `http://localhost:5000/soccer-table-c68e5/us-central1/getTableData?country=${country}&league=${country}&year=${year}`,
-      // `https://us-central1-soccer-table-c68e5.cloudfunctions.net/getTableData?country=${country}&league=${country}&year=${year}`,
+      `https://us-central1-soccer-table-c68e5.cloudfunctions.net/getTableData?country=${country}&league=${country}&year=${year}`,
     ).then(res => res.json());
   };
 
