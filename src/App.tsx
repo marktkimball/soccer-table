@@ -3,6 +3,8 @@ import './app.css';
 import Spinner from './components/spinner/Spinner';
 import { LeagueSelector } from './components/league-selector/LeagueSelector';
 import Table from './components/table/Table';
+import { Footer } from './components/footer/Footer';
+import { Header } from './components/header/Header';
 import { Matchday } from './interfaces/match-day';
 import { QualificationTypes } from './interfaces/qualification-types';
 import { Team } from './interfaces/team';
@@ -111,7 +113,8 @@ export default class App extends React.Component<{}, AppState> {
     }
 
     return fetch(
-      `https://us-central1-soccer-table-c68e5.cloudfunctions.net/getTableData?country=${country}&league=${country}&year=${year}`,
+      `http://localhost:5000/soccer-table-c68e5/us-central1/getTableData?country=${country}&league=${country}&year=${year}`,
+      // `https://us-central1-soccer-table-c68e5.cloudfunctions.net/getTableData?country=${country}&league=${country}&year=${year}`,
     ).then(res => res.json());
   };
 
@@ -145,6 +148,7 @@ export default class App extends React.Component<{}, AppState> {
 
     return (
       <div className={`app ${loaded ? selectedLeague : ''}`}>
+        <Header />
         {loaded ? (
           <div className="main-container">
             <LeagueSelector
@@ -167,6 +171,7 @@ export default class App extends React.Component<{}, AppState> {
         ) : (
           <Spinner />
         )}
+        <Footer />
       </div>
     );
   }

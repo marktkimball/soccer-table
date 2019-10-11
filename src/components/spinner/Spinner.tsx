@@ -1,15 +1,11 @@
 import React from 'react';
 import './spinner.css';
+import SoccerBall from '../../assets/soccer-ball.png';
 
 const Spinner = () => (
   <div className="spinner-container">
-    <div className="spinner">
-      <div className="rect1"></div>
-      <div className="rect2"></div>
-      <div className="rect3"></div>
-      <div className="rect4"></div>
-      <div className="rect5"></div>
-    </div>
+    <img className="soccer-ball" src={SoccerBall} />
+    <h3>Loading Soccer Table...</h3>
   </div>
 );
 

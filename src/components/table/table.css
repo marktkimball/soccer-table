@@ -48,43 +48,13 @@
   opacity: 0.3;
 }
 
-.table-grid {
-  display: grid;
-  grid-template-areas:
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row'
-    'table-row';
-  grid-template-columns: 100%;
-  grid-template-rows: repeat(21, 1fr);
-}
-
 .table-row {
   align-items: end;
   border-top: 1px solid #e0e0e0;
   border-left: 4px solid transparent;
   display: grid;
-  grid-area: 'table-row';
   grid-template-areas: 'position team-name matches-played wins draws loses goals-for goals-against goal-diff points';
   grid-template-columns: 1fr 50% 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
   padding: 8px 0 8px 12px;
 }
 
@@ -211,6 +181,14 @@
 
 .table-row:first-of-type {
   font-weight: bold;
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+}
+
+.table-row:nth-of-type(2) {
+  border-top-color: transparent;
 }
 
 .key {
@@ -277,6 +255,16 @@
   .table-row {
     grid-template-areas: 'position team-name matches-played wins draws loses goal-diff points';
     grid-template-columns: 1fr 33% 1fr 1fr 1fr 1fr 1fr 1fr;
+  }
+
+  .table-row:first-of-type {
+    border-bottom: none;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 5px 5px 0 rgba(0, 0, 0, 0.2);
+    margin: 0 -16px;
+    padding: 12px 16px;
+    top: 69px;
+    z-index: 2;
   }
 
   .goals-for,
