@@ -3,7 +3,6 @@ import './app.css';
 import Spinner from './components/spinner/Spinner';
 import { LeagueSelector } from './components/league-selector/LeagueSelector';
 import Table from './components/table/Table';
-import { Footer } from './components/footer/Footer';
 import { Header } from './components/header/Header';
 import { Matchday } from './interfaces/match-day';
 import { QualificationTypes } from './interfaces/qualification-types';
@@ -170,7 +169,6 @@ export default class App extends React.Component<{}, AppState> {
         ) : (
           <Spinner />
         )}
-        <Footer />
       </div>
     );
   }
