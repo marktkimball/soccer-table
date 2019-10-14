@@ -112,7 +112,7 @@ export default class Table extends React.Component<TableProps, {}> {
         </h1>
         <p>
           Analyze how teams performed within a range of matchdays be adjusting
-          the beginning and ending matchday with the dropdowns below.
+          the beginning and ending matchday below.
         </p>
         <div className="filter-selectors-container">
           <label htmlFor="begin-selector" className="matchday-selector-label">

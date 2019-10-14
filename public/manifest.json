@@ -1,6 +1,6 @@
 {
-  "short_name": "Soccer Table",
-  "name": "Soccer Table - Analyze teams' performance",
+  "short_name": "Soccer Standings",
+  "name": "Soccer Standings - Analyze teams' performance",
   "icons": [
     {
       "src": "favicon.ico",
