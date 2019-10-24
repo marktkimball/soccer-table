@@ -64,6 +64,7 @@
 }
 
 .club-row {
+  cursor: pointer;
   transition: background 100ms ease-in;
 }
 

@@ -19,6 +19,7 @@ interface TableProps {
   ) => void;
   league: string;
   matchdays: { [matchdayId: string]: Matchday };
+  onTeamSelect: (teamId: string) => void;
   qualificationTypes: QualificationTypes;
   teams: { [teamId: string]: Team };
   totalMatchdays: number;
@@ -93,6 +94,7 @@ export default class Table extends React.Component<TableProps, {}> {
       handleEndMatchdayChange,
       league,
       matchdays,
+      onTeamSelect,
       qualificationTypes,
       teams,
       totalMatchdays,
@@ -177,6 +179,7 @@ export default class Table extends React.Component<TableProps, {}> {
                 <div
                   key={teamId}
                   className={`table-row club-row ${qualificationClass}`}
+                  onClick={() => onTeamSelect(teamId)}
                 >
                   <div className="position">{index + 1}</div>
                   <div className="team-name">

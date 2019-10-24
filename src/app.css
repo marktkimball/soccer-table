@@ -1,65 +1,9 @@
 .app {
   align-items: center;
-  background: #f5f5f5;
   color: #212121;
   display: flex;
   height: 100%;
   flex-direction: column;
-}
-
-.app.england {
-  background: linear-gradient(
-    125deg,
-    #04f5ff 0%,
-    #00ff85 50%,
-    #38003c 80%,
-    #e90052 100%
-  );
-}
-
-.app.spain {
-  background: radial-gradient(
-      circle at top right,
-      rgba(255, 0, 0, 1),
-      rgba(255, 0, 0, 0) 75%
-    ),
-    radial-gradient(
-      circle at center right,
-      rgba(255, 230, 0, 1),
-      rgba(255, 230, 0, 0) 75%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      rgba(0, 170, 0, 1),
-      rgba(0, 170, 0, 0) 75%
-    ),
-    radial-gradient(
-      circle at bottom left,
-      rgba(0, 73, 208, 1),
-      rgba(0, 73, 208, 0) 75%
-    ),
-    radial-gradient(
-      circle at top left,
-      rgba(144, 20, 128, 1),
-      rgba(144, 20, 128, 0) 75%
-    );
-}
-
-.app.germany {
-  background: linear-gradient(45deg, #d3010c 33%, #fff 66%, #000 95%);
-}
-
-.app.italy {
-  background: radial-gradient(
-    circle at top center,
-    #0091d8,
-    #99ddff 40%,
-    #002872 85%
-  );
-}
-
-.app.france {
-  background: linear-gradient(#dbe11f 15%, #0a1d3d, #ed151e);
 }
 
 .main-container {
@@ -71,6 +15,7 @@
   margin: 48px 0;
   max-width: 1000px;
   padding: 48px;
+  width: 100%;
 }
 
 @media only screen and (max-width: 768px) {

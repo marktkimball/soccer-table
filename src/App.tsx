@@ -3,6 +3,7 @@ import './app.css';
 import Spinner from './components/spinner/Spinner';
 import { LeagueSelector } from './components/league-selector/LeagueSelector';
 import Table from './components/table/Table';
+import TeamProfile from './components/team-profile/TeamProfile';
 import { Header } from './components/header/Header';
 import { Matchday } from './interfaces/match-day';
 import { QualificationTypes } from './interfaces/qualification-types';
@@ -26,6 +27,7 @@ interface AppState {
   matchdays: { [matchdayId: string]: Matchday };
   qualificationTypes: QualificationTypes;
   selectedLeague: string;
+  selectedTeamId: string;
   teams: { [teamId: string]: Team };
   totalMatchdays: number;
   year: string;
@@ -48,6 +50,7 @@ export default class App extends React.Component<{}, AppState> {
     matchdays: {},
     qualificationTypes: {},
     selectedLeague: 'england',
+    selectedTeamId: '',
     teams: {},
     totalMatchdays: 1,
     year: '2019',
@@ -66,7 +69,11 @@ export default class App extends React.Component<{}, AppState> {
   }
 
   getAndSetTableData = async (selectedLeague: string) => {
-    const { cachedTableData, year } = this.state;
+    const {
+      cachedTableData,
+      selectedLeague: previousSelectedLeague,
+      year,
+    } = this.state;
     const {
       matchdays,
       qualificationTypes,
@@ -95,10 +102,25 @@ export default class App extends React.Component<{}, AppState> {
       teams,
       totalMatchdays,
     });
+
+    const body = document.getElementsByTagName('body')[0];
+    body.classList.remove(previousSelectedLeague);
+    body.classList.add(selectedLeague);
   };
 
   onLeagueSelect = (selectedLeague: string) => {
     this.getAndSetTableData(selectedLeague);
+  };
+
+  onTeamSelect = (selectedTeamId: string) => {
+    this.setState({ selectedTeamId });
+    const team = this.state.teams[selectedTeamId];
+    const deg = Math.floor(Math.random() * 360);
+    const newBackground = team
+      ? `linear-gradient(${deg}deg, ${team.primaryColor} 60%, #fff 60%, #fff 70%, ${team.secondaryColor} 60%)`
+      : '';
+
+    document.getElementsByTagName('body')[0].style.background = newBackground;
   };
 
   getTableData = (country: string, year: string): Promise<FetchResponse> => {
@@ -140,31 +162,44 @@ export default class App extends React.Component<{}, AppState> {
       matchdays,
       qualificationTypes,
       selectedLeague,
+      selectedTeamId,
       teams,
       totalMatchdays,
     } = this.state;
 
     return (
-      <div className={`app ${loaded ? selectedLeague : ''}`}>
-        <Header />
+      <div className="app">
+        <Header onClick={() => this.onTeamSelect('')} />
         {loaded ? (
           <div className="main-container">
-            <LeagueSelector
-              leagues={leagues}
-              onChange={this.onLeagueSelect}
-              selectedLeague={selectedLeague}
-            />
-            <Table
-              beginMatchday={beginMatchday}
-              endMatchday={endMatchday}
-              handleBeginMatchdayChange={this.handleBeginMatchdayChange}
-              handleEndMatchdayChange={this.handleEndMatchdayChange}
-              league={selectedLeague}
-              matchdays={matchdays}
-              qualificationTypes={qualificationTypes}
-              teams={teams}
-              totalMatchdays={totalMatchdays}
-            />
+            {selectedTeamId ? (
+              <TeamProfile
+                matchdays={matchdays}
+                onBackClick={() => this.onTeamSelect('')}
+                team={teams[selectedTeamId]}
+                teams={teams}
+              />
+            ) : (
+              <>
+                <LeagueSelector
+                  leagues={leagues}
+                  onChange={this.onLeagueSelect}
+                  selectedLeague={selectedLeague}
+                />
+                <Table
+                  beginMatchday={beginMatchday}
+                  endMatchday={endMatchday}
+                  handleBeginMatchdayChange={this.handleBeginMatchdayChange}
+                  handleEndMatchdayChange={this.handleEndMatchdayChange}
+                  league={selectedLeague}
+                  matchdays={matchdays}
+                  onTeamSelect={this.onTeamSelect}
+                  qualificationTypes={qualificationTypes}
+                  teams={teams}
+                  totalMatchdays={totalMatchdays}
+                />
+              </>
+            )}
           </div>
         ) : (
           <Spinner />

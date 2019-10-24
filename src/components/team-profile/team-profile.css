@@ -1,0 +1,90 @@
+.team-profile-back-button {
+  cursor: pointer;
+  display: inline-block;
+  margin: 0;
+}
+
+.team-profile-header {
+  align-items: center;
+  display: flex;
+  margin: 48px 0;
+}
+
+.team-profile-logo {
+  max-height: 130px;
+  max-width: 130px;
+  width: auto;
+  height: auto;
+  margin: 0 48px 0 0;
+}
+
+.team-profile-data {
+  border-left: 2px solid #000;
+  padding: 16px 48px;
+}
+
+.team-profile-display-name {
+  margin: 0;
+}
+
+.results-header {
+  border-image: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0))
+    0 0 100%;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.fixture-row {
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+
+.fixture-row:nth-last-of-type(1) {
+  border-bottom: none;
+}
+
+.fixture-row-result {
+  align-items: center;
+  display: flex;
+  flex: 3;
+  justify-content: space-between;
+}
+
+.fixture-row-date {
+  flex: 2;
+}
+
+.fixture-row-item {
+  margin: 0;
+}
+
+.fixture-row-score {
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+@media only screen and (max-width: 768px) {
+  .team-profile-header {
+    flex-direction: column;
+  }
+
+  .team-profile-logo {
+    margin: 0 0 48px 0;
+  }
+
+  .team-profile-data {
+    border-left: none;
+    border-top: 2px solid #000;
+  }
+
+  .fixture-row-result {
+    flex: 2;
+  }
+
+  .fixture-row-date {
+    flex: 1;
+  }
+}
