@@ -1,12 +1,9 @@
 import React from 'react';
-import pickBy from 'lodash/pickBy';
-import memoize from 'memoize-one';
 import './table.css';
-import { Matchday } from '../../interfaces/match-day';
 import { QualificationTypes } from '../../interfaces/qualification-types';
 import { Team } from '../../interfaces/team';
 import { TeamStats } from '../../interfaces/team-stats';
-import { getTable } from '../../utils/get-table';
+import { getLeagueName } from '../../utils/league';
 
 interface TableProps {
   beginMatchday: number;
@@ -18,32 +15,14 @@ interface TableProps {
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => void;
   league: string;
-  matchdays: { [matchdayId: string]: Matchday };
   onTeamSelect: (teamId: string) => void;
   qualificationTypes: QualificationTypes;
+  table: TeamStats[];
   teams: { [teamId: string]: Team };
   totalMatchdays: number;
 }
 
 export default class Table extends React.Component<TableProps, {}> {
-  filter = memoize((matchdays, teams) => getTable(matchdays, teams));
-
-  getLeagueName = (league: string) => {
-    switch (league) {
-      case 'germany':
-        return 'Bundesliga';
-      case 'spain':
-        return 'La Liga';
-      case 'italy':
-        return 'Serie A';
-      case 'france':
-        return 'Ligue 1';
-      case 'england':
-      default:
-        return 'Premier League';
-    }
-  };
-
   getQualificationClass = (index: number) => {
     const {
       qualificationTypes: {
@@ -93,25 +72,18 @@ export default class Table extends React.Component<TableProps, {}> {
       handleBeginMatchdayChange,
       handleEndMatchdayChange,
       league,
-      matchdays,
       onTeamSelect,
       qualificationTypes,
+      table,
       teams,
       totalMatchdays,
     } = this.props;
 
     const matchdayArray = [...Array(totalMatchdays)];
-    const filteredMatchdays = pickBy(
-      matchdays,
-      ({ matchday }) => matchday >= beginMatchday && matchday <= endMatchday,
-    );
-    const filteredTable: TeamStats[] = this.filter(filteredMatchdays, teams);
 
     return (
       <>
-        <h1 className="league-header">
-          {this.getLeagueName(league)} - 2019/2020
-        </h1>
+        <h1 className="league-header">{getLeagueName(league)} - 2019/2020</h1>
         <p>
           Analyze how teams performed within a range of matchdays be adjusting
           the beginning and ending matchday below.
@@ -167,7 +139,7 @@ export default class Table extends React.Component<TableProps, {}> {
             <div className="goal-diff">GD</div>
             <div className="points">Pts</div>
           </div>
-          {filteredTable.map(
+          {table.map(
             (
               { teamId, goalsAgainst, goalsFor, points, wins, draws, loses },
               index: number,

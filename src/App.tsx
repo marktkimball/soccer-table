@@ -1,4 +1,6 @@
 import React from 'react';
+import pickBy from 'lodash/pickBy';
+import memoize from 'memoize-one';
 import './app.css';
 import Spinner from './components/spinner/Spinner';
 import { LeagueSelector } from './components/league-selector/LeagueSelector';
@@ -8,6 +10,8 @@ import { Header } from './components/header/Header';
 import { Matchday } from './interfaces/match-day';
 import { QualificationTypes } from './interfaces/qualification-types';
 import { Team } from './interfaces/team';
+import { TeamStats } from './interfaces/team-stats';
+import { getTable } from './utils/get-table';
 
 interface AppState {
   beginMatchday: number;
@@ -25,6 +29,7 @@ interface AppState {
   leagues: string[];
   loaded: boolean;
   matchdays: { [matchdayId: string]: Matchday };
+  normalTable: TeamStats[];
   qualificationTypes: QualificationTypes;
   selectedLeague: string;
   selectedTeamId: string;
@@ -48,6 +53,7 @@ export default class App extends React.Component<{}, AppState> {
     leagues: ['england', 'spain', 'germany', 'italy', 'france'],
     loaded: false,
     matchdays: {},
+    normalTable: [],
     qualificationTypes: {},
     selectedLeague: 'england',
     selectedTeamId: '',
@@ -55,6 +61,8 @@ export default class App extends React.Component<{}, AppState> {
     totalMatchdays: 1,
     year: '2019',
   };
+
+  filter = memoize((matchdays, teams) => getTable(matchdays, teams));
 
   componentDidMount() {
     const params = new URL(document.location.href).searchParams;
@@ -106,6 +114,7 @@ export default class App extends React.Component<{}, AppState> {
     const body = document.getElementsByTagName('body')[0];
     body.classList.remove(previousSelectedLeague);
     body.classList.add(selectedLeague);
+    this.setState({ normalTable: this.filter(matchdays, teams) });
   };
 
   onLeagueSelect = (selectedLeague: string) => {
@@ -160,12 +169,19 @@ export default class App extends React.Component<{}, AppState> {
       leagues,
       loaded,
       matchdays,
+      normalTable,
       qualificationTypes,
       selectedLeague,
       selectedTeamId,
       teams,
       totalMatchdays,
     } = this.state;
+
+    const filteredMatchdays = pickBy(
+      matchdays,
+      ({ matchday }) => matchday >= beginMatchday && matchday <= endMatchday,
+    );
+    const filteredTable: TeamStats[] = this.filter(filteredMatchdays, teams);
 
     return (
       <div className="app">
@@ -174,8 +190,14 @@ export default class App extends React.Component<{}, AppState> {
           <div className="main-container">
             {selectedTeamId ? (
               <TeamProfile
+                league={selectedLeague}
                 matchdays={matchdays}
                 onBackClick={() => this.onTeamSelect('')}
+                placement={
+                  normalTable.findIndex(
+                    ({ teamId }) => teamId === selectedTeamId,
+                  ) + 1
+                }
                 team={teams[selectedTeamId]}
                 teams={teams}
               />
@@ -192,9 +214,9 @@ export default class App extends React.Component<{}, AppState> {
                   handleBeginMatchdayChange={this.handleBeginMatchdayChange}
                   handleEndMatchdayChange={this.handleEndMatchdayChange}
                   league={selectedLeague}
-                  matchdays={matchdays}
                   onTeamSelect={this.onTeamSelect}
                   qualificationTypes={qualificationTypes}
+                  table={filteredTable}
                   teams={teams}
                   totalMatchdays={totalMatchdays}
                 />
