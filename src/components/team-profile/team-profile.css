@@ -1,5 +1,6 @@
 .team-profile-back-button {
   cursor: pointer;
+  display: inline-block;
   font-weight: bold;
   margin: 0;
   padding-left: 0;
