@@ -29,6 +29,7 @@ header {
 
 @media only screen and (max-width: 768px) {
   header {
+    padding: 24px 8px;
     position: sticky;
     top: 0;
   }
