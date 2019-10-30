@@ -1,7 +1,10 @@
 import React from 'react';
 import pickBy from 'lodash/pickBy';
 import memoize from 'memoize-one';
+import * as firebase from 'firebase/app';
+
 import './app.css';
+
 import Spinner from './components/spinner/Spinner';
 import { LeagueSelector } from './components/league-selector/LeagueSelector';
 import Table from './components/table/Table';
@@ -114,15 +117,21 @@ export default class App extends React.Component<{}, AppState> {
     const body = document.getElementsByTagName('body')[0];
     body.classList.remove(previousSelectedLeague);
     body.classList.add(selectedLeague);
+
     this.setState({ normalTable: this.filter(matchdays, teams) });
   };
 
   onLeagueSelect = (selectedLeague: string) => {
     this.getAndSetTableData(selectedLeague);
+
+    firebase.analytics().logEvent('select_league', {
+      league: selectedLeague,
+    });
   };
 
   onTeamSelect = (selectedTeamId: string) => {
     this.setState({ selectedTeamId });
+
     const team = this.state.teams[selectedTeamId];
     const deg = Math.floor(Math.random() * 360);
     const newBackground = team
@@ -130,21 +139,46 @@ export default class App extends React.Component<{}, AppState> {
       : '';
 
     document.getElementsByTagName('body')[0].style.background = newBackground;
+
+    if (team) {
+      firebase.analytics().logEvent('select_team', {
+        teamName: team.displayName,
+        teamId: selectedTeamId,
+      });
+    }
   };
 
   getTableData = (country: string, year: string): Promise<FetchResponse> => {
+    const t0 = performance.now();
     const { cachedTableData } = this.state;
+
     if (
       cachedTableData &&
       cachedTableData[country] &&
       cachedTableData[country][year]
     ) {
+      const t1 = performance.now();
+
+      firebase.analytics().logEvent('fetch_table_data', {
+        fromCache: true,
+        timing: t1 - t0,
+      });
+
       return Promise.resolve(cachedTableData[country][year]);
     }
 
     return fetch(
       `https://us-central1-soccer-table-c68e5.cloudfunctions.net/getTableData?country=${country}&league=${country}&year=${year}`,
-    ).then(res => res.json());
+    ).then(res => {
+      const t1 = performance.now();
+
+      firebase.analytics().logEvent('fetch_table_data', {
+        fromCache: false,
+        timing: t1 - t0,
+      });
+
+      return res.json();
+    });
   };
 
   handleBeginMatchdayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -156,10 +190,25 @@ export default class App extends React.Component<{}, AppState> {
       beginMatchday,
       endMatchday: setEndMatchday ? beginMatchday : endMatchday,
     });
+
+    firebase
+      .analytics()
+      .logEvent('change_begin_matchday', { beginMatchday, endMatchday });
   };
 
   handleEndMatchdayChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    this.setState({ endMatchday: +event.currentTarget.value });
+    const endMatchday = +event.currentTarget.value;
+    this.setState({ endMatchday });
+
+    firebase.analytics().logEvent('change_end_matchday', {
+      endMatchday,
+      beginMatchday: this.state.beginMatchday,
+    });
+  };
+
+  onBackButtonClick = (source: string) => {
+    this.onTeamSelect('');
+    firebase.analytics().logEvent(`${source}_click`);
   };
 
   render() {
@@ -185,14 +234,16 @@ export default class App extends React.Component<{}, AppState> {
 
     return (
       <div className="app">
-        <Header onClick={() => this.onTeamSelect('')} />
+        <Header onClick={() => this.onBackButtonClick('header_logo')} />
         {loaded ? (
           <div className="main-container">
             {selectedTeamId ? (
               <TeamProfile
                 league={selectedLeague}
                 matchdays={matchdays}
-                onBackClick={() => this.onTeamSelect('')}
+                onBackClick={() =>
+                  this.onBackButtonClick('team_profile_back_button')
+                }
                 placement={
                   normalTable.findIndex(
                     ({ teamId }) => teamId === selectedTeamId,
