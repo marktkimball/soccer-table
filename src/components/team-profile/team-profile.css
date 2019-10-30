@@ -33,13 +33,17 @@
   margin: 48px 0;
 }
 
-.team-profile-logo {
-  height: auto;
+.team-profile-logo-container {
+  align-items: center;
+  display: flex;
+  height: 150px;
+  justify-content: center;
   margin: 0 48px 0 0;
-  max-height: 130px;
-  max-width: 130px;
-  min-height: 130px;
-  min-width: 130px;
+  width: 150px;
+}
+
+.team-profile-logo {
+  max-height: 100%;
   width: auto;
 }
 

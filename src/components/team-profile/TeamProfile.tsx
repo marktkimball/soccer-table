@@ -39,11 +39,13 @@ const TeamProfile: React.SFC<TeamProfileProps> = ({
         Back
       </h4>
       <div className="team-profile-header">
-        <img
-          alt={team.displayName}
-          className="team-profile-logo"
-          src={require(`../../assets/logos/${team.logoSrc}`)}
-        />
+        <div className="team-profile-logo-container">
+          <img
+            alt={team.displayName}
+            className="team-profile-logo"
+            src={require(`../../assets/logos/${team.logoSrc}`)}
+          />
+        </div>
         <div className="team-profile-data">
           <h1 className="team-profile-display-name">{team.displayName}</h1>
           <div className="team-profile-info-line">
