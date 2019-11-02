@@ -135,7 +135,7 @@ export default class App extends React.Component<{}, AppState> {
     const team = this.state.teams[selectedTeamId];
     const deg = Math.floor(Math.random() * 360);
     const newBackground = team
-      ? `linear-gradient(${deg}deg, ${team.primaryColor} 60%, #fff 60%, #fff 70%, ${team.secondaryColor} 60%)`
+      ? `linear-gradient(${deg}deg, ${team.primaryColor} 0%, #fff 70%, ${team.secondaryColor} 100%)`
       : '';
 
     document.getElementsByTagName('body')[0].style.background = newBackground;
