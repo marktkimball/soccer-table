@@ -88,10 +88,10 @@ export const getTeamFixtures = (
   return teamFixtures.sort(
     ({ kickOffTime: kickOffTimeA }, { kickOffTime: kickOffTimeB }) => {
       if (kickOffTimeA < kickOffTimeB) {
-        return 1;
+        return -1;
       }
 
-      return -1;
+      return 1;
     },
   );
 };

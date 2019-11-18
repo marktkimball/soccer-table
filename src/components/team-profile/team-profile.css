@@ -73,6 +73,11 @@
   border-width: 1px;
 }
 
+.fixtures-container {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 .fixture-row {
   align-items: center;
   border-bottom: 1px solid #e0e0e0;
@@ -81,7 +86,7 @@
   padding: 16px 0;
 }
 
-.fixture-row:nth-last-of-type(1) {
+.fixture-row:nth-of-type(1) {
   border-bottom: none;
 }
 
@@ -128,6 +133,10 @@
   filter: invert(1);
   padding: 1px 0;
   transform: rotate(90deg);
+}
+
+.chart-container {
+  display: flex;
 }
 
 @media only screen and (max-width: 768px) {
