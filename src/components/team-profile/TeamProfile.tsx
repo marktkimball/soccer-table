@@ -152,17 +152,15 @@ const TeamProfile: React.SFC<TeamProfileProps> = ({
           </div>
         </div>
       </div>
-      <div className="chart-container">
-        <SparklineChart
-          height={160}
-          hoverLineColor="#444"
-          maxPoints={maxPointsArray}
-          maxPointsColor="#808080"
-          teamPoints={pointsArray}
-          teamPointsColor="#43A047"
-          width={400}
-        />
-      </div>
+      <SparklineChart
+        height={160}
+        hoverLineColor="#444"
+        maxPoints={maxPointsArray}
+        maxPointsColor="#808080"
+        teamPoints={pointsArray}
+        teamPointsColor="#43A047"
+        width={400}
+      />
       <div>
         <h3 className="results-header">Results</h3>
         <div className="fixtures-container">

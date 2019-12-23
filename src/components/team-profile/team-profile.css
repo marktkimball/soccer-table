@@ -135,10 +135,6 @@
   transform: rotate(90deg);
 }
 
-.chart-container {
-  display: flex;
-}
-
 @media only screen and (max-width: 768px) {
   .team-profile-header {
     flex-direction: column;

@@ -7,4 +7,5 @@ export interface Team {
   primaryColor: string;
   secondaryColor: string;
   shortenedName: string;
+  sourceId: string;
 }

@@ -1,3 +1,7 @@
+.chart-container {
+  display: flex;
+}
+
 .sparkline-stats {
   display: flex;
   flex-direction: column;
@@ -11,4 +15,10 @@
 
 .sparkline-stat-item > span {
   font-size: 32px;
+}
+
+@media only screen and (max-width: 768px) {
+  .chart-container {
+    flex-direction: column;
+  }
 }

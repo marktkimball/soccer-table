@@ -138,7 +138,7 @@ export class SparklineChart extends React.Component<
     };
 
     return (
-      <>
+      <div className="chart-container">
         <svg
           onMouseMove={this.onMouseMove}
           viewBox={`0 0 ${width} ${height}`}
@@ -190,7 +190,7 @@ export class SparklineChart extends React.Component<
             Team points: <span>{this.state.currentTeamPointValue}</span>
           </p>
         </div>
-      </>
+      </div>
     );
   }
 }
