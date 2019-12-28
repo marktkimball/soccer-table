@@ -130,6 +130,8 @@ export default class App extends React.Component<{}, AppState> {
   };
 
   onTeamSelect = (selectedTeamId: string) => {
+    window.scrollTo(0, 0);
+
     this.setState({ selectedTeamId });
 
     const team = this.state.teams[selectedTeamId];

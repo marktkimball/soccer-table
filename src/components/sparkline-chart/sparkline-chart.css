@@ -2,6 +2,10 @@
   display: flex;
 }
 
+.chart-container > svg {
+  max-width: 100%;
+}
+
 .sparkline-stats {
   display: flex;
   flex-direction: column;
@@ -20,5 +24,10 @@
 @media only screen and (max-width: 768px) {
   .chart-container {
     flex-direction: column;
+    padding: 24px 16px;
+  }
+
+  .sparkline-stats {
+    margin-left: 0;
   }
 }

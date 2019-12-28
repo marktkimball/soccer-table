@@ -240,11 +240,11 @@ const pushMatches = async (
           return db
             .ref(`/matchdays/${league}/2019/${+matchdayNumber - 1}`)
             .set({
-              startDate: '',
               endDate: '',
               fixtures,
-              matchday: +matchdayNumber,
               id: uuid(),
+              matchday: +matchdayNumber,
+              startDate: '',
             });
         }
       });
@@ -264,6 +264,10 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
       },
     },
     async (error, response, body) => {
+      if (error) {
+        console.info('ERROR DURING FUNCTION EXECUTION', error);
+      }
+
       if (!error && response.statusCode === 200) {
         const { document } = new JSDOM(body).window;
         const leagues = document.getElementsByClassName('kategorie');
@@ -329,6 +333,7 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
             await pushMatches(db, matchdayFixtures, 'france');
           }
         }
+
         res.sendStatus(200);
       } else {
         res.sendStatus(500);
