@@ -271,6 +271,19 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
       if (!error && response.statusCode === 200) {
         const { document } = new JSDOM(body).window;
         const leagues = document.getElementsByClassName('kategorie');
+
+        /*
+         * seenCount prevents the data extraction happening in error for
+         * leagues we don't care about that have the same name (i.e. Ghana Premier League)
+         */
+        const seenCount = {
+          england: 0,
+          france: 0,
+          germany: 0,
+          italy: 0,
+          spain: 0,
+        };
+
         if (!admin.apps.length) {
           admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
@@ -282,8 +295,9 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
         for (const league of leagues) {
           const title = league.querySelectorAll('a')[0].getAttribute('title');
 
-          if (title === 'Premier League') {
+          if (title === 'Premier League' && seenCount.england === 0) {
             console.info('Found Premier League Matches');
+
             const matchdayFixtures = await extractData(
               db,
               league,
@@ -291,9 +305,12 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
               title,
             );
             await pushMatches(db, matchdayFixtures, 'england');
+
+            seenCount.england = 1;
           }
-          if (title === 'LaLiga') {
+          if (title === 'LaLiga' && seenCount.spain === 0) {
             console.info('Found La Liga Matches');
+
             const matchdayFixtures = await extractData(
               db,
               league,
@@ -301,9 +318,12 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
               title,
             );
             await pushMatches(db, matchdayFixtures, 'spain');
+
+            seenCount.spain = 1;
           }
-          if (title === 'Bundesliga') {
+          if (title === 'Bundesliga' && seenCount.germany === 0) {
             console.info('Found Bundesliga Matches');
+
             const matchdayFixtures = await extractData(
               db,
               league,
@@ -311,9 +331,12 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
               title,
             );
             await pushMatches(db, matchdayFixtures, 'germany');
+
+            seenCount.germany = 1;
           }
-          if (title === 'Serie A') {
+          if (title === 'Serie A' && seenCount.italy === 0) {
             console.info('Found Serie A Matches');
+
             const matchdayFixtures = await extractData(
               db,
               league,
@@ -321,9 +344,12 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
               title,
             );
             await pushMatches(db, matchdayFixtures, 'italy');
+
+            seenCount.italy = 1;
           }
-          if (title === 'Ligue 1') {
+          if (title === 'Ligue 1' && seenCount.france === 0) {
             console.info('Found Ligue 1 Matches');
+
             const matchdayFixtures = await extractData(
               db,
               league,
@@ -331,6 +357,8 @@ exports.scrapeScores = functions.https.onRequest(async (req, res) => {
               title,
             );
             await pushMatches(db, matchdayFixtures, 'france');
+
+            seenCount.france = 1;
           }
         }
 
