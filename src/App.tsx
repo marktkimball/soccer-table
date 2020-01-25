@@ -1,4 +1,11 @@
 import React from 'react';
+import {
+  Redirect,
+  Route,
+  Switch,
+  withRouter,
+  RouteComponentProps,
+} from 'react-router-dom';
 import pickBy from 'lodash/pickBy';
 import memoize from 'memoize-one';
 import * as firebase from 'firebase/app';
@@ -35,7 +42,6 @@ interface AppState {
   normalTable: TeamStats[];
   qualificationTypes: QualificationTypes;
   selectedLeague: string;
-  selectedTeamId: string;
   teams: { [teamId: string]: Team };
   totalMatchdays: number;
   year: string;
@@ -48,7 +54,7 @@ interface FetchResponse {
   totalMatchdays: number;
 }
 
-export default class App extends React.Component<{}, AppState> {
+class App extends React.Component<RouteComponentProps, AppState> {
   state: AppState = {
     beginMatchday: 1,
     cachedTableData: {},
@@ -59,7 +65,6 @@ export default class App extends React.Component<{}, AppState> {
     normalTable: [],
     qualificationTypes: {},
     selectedLeague: 'england',
-    selectedTeamId: '',
     teams: {},
     totalMatchdays: 1,
     year: '2019',
@@ -68,14 +73,31 @@ export default class App extends React.Component<{}, AppState> {
   filter = memoize((matchdays, teams) => getTable(matchdays, teams));
 
   componentDidMount() {
-    const params = new URL(document.location.href).searchParams;
-    const countryParam = params.get('country');
-    if (countryParam) {
-      this.setState({ selectedLeague: countryParam }, () =>
-        this.getAndSetTableData(countryParam),
-      );
-    } else {
-      this.getAndSetTableData(this.state.selectedLeague);
+    const {
+      location: { pathname },
+    } = this.props;
+    const urlArray = pathname.split('/');
+    const league = urlArray[urlArray.indexOf('league') + 1];
+
+    this.setState({ selectedLeague: league }, () =>
+      this.getAndSetTableData(league),
+    );
+  }
+
+  componentDidUpdate(prevProps: RouteComponentProps) {
+    const {
+      location: { pathname: nextPathname },
+    } = this.props;
+    const {
+      location: { pathname: prevPathname },
+    } = prevProps;
+    const nextUrlArray = nextPathname.split('/');
+    const prevUrlArray = prevPathname.split('/');
+    const nextLeague = nextUrlArray[nextUrlArray.indexOf('league') + 1];
+    const prevLeague = prevUrlArray[prevUrlArray.indexOf('league') + 1];
+
+    if (nextLeague !== prevLeague) {
+      this.onLeagueSelect(nextLeague);
     }
   }
 
@@ -127,27 +149,6 @@ export default class App extends React.Component<{}, AppState> {
     firebase.analytics().logEvent('select_league', {
       league: selectedLeague,
     });
-  };
-
-  onTeamSelect = (selectedTeamId: string) => {
-    window.scrollTo(0, 0);
-
-    this.setState({ selectedTeamId });
-
-    const team = this.state.teams[selectedTeamId];
-    const deg = Math.floor(Math.random() * 360);
-    const newBackground = team
-      ? `linear-gradient(${deg}deg, ${team.primaryColor} 0%, #fff 70%, ${team.secondaryColor} 100%)`
-      : '';
-
-    document.getElementsByTagName('body')[0].style.background = newBackground;
-
-    if (team) {
-      firebase.analytics().logEvent('select_team', {
-        teamName: team.displayName,
-        teamId: selectedTeamId,
-      });
-    }
   };
 
   getTableData = (country: string, year: string): Promise<FetchResponse> => {
@@ -209,7 +210,8 @@ export default class App extends React.Component<{}, AppState> {
   };
 
   onBackButtonClick = (source: string) => {
-    this.onTeamSelect('');
+    const { selectedLeague } = this.state;
+    this.props.history.push(`/league/${selectedLeague}`);
     firebase.analytics().logEvent(`${source}_click`);
   };
 
@@ -223,7 +225,6 @@ export default class App extends React.Component<{}, AppState> {
       normalTable,
       qualificationTypes,
       selectedLeague,
-      selectedTeamId,
       teams,
       totalMatchdays,
     } = this.state;
@@ -239,42 +240,39 @@ export default class App extends React.Component<{}, AppState> {
         <Header onClick={() => this.onBackButtonClick('header_logo')} />
         {loaded ? (
           <div className="main-container">
-            {selectedTeamId ? (
-              <TeamProfile
-                league={selectedLeague}
-                matchdays={matchdays}
-                onBackClick={() =>
-                  this.onBackButtonClick('team_profile_back_button')
-                }
-                placement={
-                  normalTable.findIndex(
-                    ({ teamId }) => teamId === selectedTeamId,
-                  ) + 1
-                }
-                team={teams[selectedTeamId]}
-                teams={teams}
-              />
-            ) : (
-              <>
-                <LeagueSelector
-                  leagues={leagues}
-                  onChange={this.onLeagueSelect}
-                  selectedLeague={selectedLeague}
-                />
-                <Table
-                  beginMatchday={beginMatchday}
-                  endMatchday={endMatchday}
-                  handleBeginMatchdayChange={this.handleBeginMatchdayChange}
-                  handleEndMatchdayChange={this.handleEndMatchdayChange}
+            <Switch>
+              <Redirect exact from="/" to="/league/england" />
+              <Route exact path="/league/:country">
+                <>
+                  <LeagueSelector
+                    leagues={leagues}
+                    selectedLeague={selectedLeague}
+                  />
+                  <Table
+                    beginMatchday={beginMatchday}
+                    endMatchday={endMatchday}
+                    handleBeginMatchdayChange={this.handleBeginMatchdayChange}
+                    handleEndMatchdayChange={this.handleEndMatchdayChange}
+                    league={selectedLeague}
+                    qualificationTypes={qualificationTypes}
+                    table={filteredTable}
+                    teams={teams}
+                    totalMatchdays={totalMatchdays}
+                  />
+                </>
+              </Route>
+              <Route path="/league/:country/team/:teamId">
+                <TeamProfile
                   league={selectedLeague}
-                  onTeamSelect={this.onTeamSelect}
-                  qualificationTypes={qualificationTypes}
-                  table={filteredTable}
+                  matchdays={matchdays}
+                  normalTable={normalTable}
+                  onBackClick={() =>
+                    this.onBackButtonClick('team_profile_back_button')
+                  }
                   teams={teams}
-                  totalMatchdays={totalMatchdays}
                 />
-              </>
-            )}
+              </Route>
+            </Switch>
           </div>
         ) : (
           <Spinner />
@@ -283,3 +281,5 @@ export default class App extends React.Component<{}, AppState> {
     );
   }
 }
+
+export default withRouter(App);

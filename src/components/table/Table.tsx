@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './table.css';
 import { QualificationTypes } from '../../interfaces/qualification-types';
 import { Team } from '../../interfaces/team';
@@ -15,7 +16,6 @@ interface TableProps {
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => void;
   league: string;
-  onTeamSelect: (teamId: string) => void;
   qualificationTypes: QualificationTypes;
   table: TeamStats[];
   teams: { [teamId: string]: Team };
@@ -72,7 +72,6 @@ export default class Table extends React.Component<TableProps, {}> {
       handleBeginMatchdayChange,
       handleEndMatchdayChange,
       league,
-      onTeamSelect,
       qualificationTypes,
       table,
       teams,
@@ -127,7 +126,7 @@ export default class Table extends React.Component<TableProps, {}> {
           </label>
         </div>
         <div className="table-grid">
-          <div className="table-row">
+          <div className="table-row key-row">
             <div className="position">Pos.</div>
             <div className="team-name">Club</div>
             <div className="matches-played">MP</div>
@@ -148,34 +147,38 @@ export default class Table extends React.Component<TableProps, {}> {
               const qualificationClass = this.getQualificationClass(index + 1);
 
               return (
-                <div
+                <Link
                   key={teamId}
-                  className={`table-row club-row ${qualificationClass}`}
-                  onClick={() => onTeamSelect(teamId)}
+                  to={`/league/${league}/team/${teamId}`}
+                  style={{ textDecoration: 'none' }}
                 >
-                  <div className="position">{index + 1}</div>
-                  <div className="team-name">
-                    <div className="team-logo-container">
-                      <img
-                        alt={team.displayName}
-                        className="team-logo"
-                        src={require(`../../assets/logos/${team.logoSrc}`)}
-                      />
+                  <div className={`table-row club-row ${qualificationClass}`}>
+                    <div className="position">{index + 1}</div>
+                    <div className="team-name">
+                      <div className="team-logo-container">
+                        <img
+                          alt={team.displayName}
+                          className="team-logo"
+                          src={require(`../../assets/logos/${team.logoSrc}`)}
+                        />
+                      </div>
+                      <div>
+                        <div className="shortened-name">
+                          {team.shortenedName}
+                        </div>
+                        <div className="full-name">{team.displayName}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="shortened-name">{team.shortenedName}</div>
-                      <div className="full-name">{team.displayName}</div>
-                    </div>
+                    <div className="matches-played">{wins + draws + loses}</div>
+                    <div className="wins">{wins}</div>
+                    <div className="draws">{draws}</div>
+                    <div className="loses">{loses}</div>
+                    <div className="goals-for">{goalsFor}</div>
+                    <div className="goals-against">{goalsAgainst}</div>
+                    <div className="goal-diff">{goalsFor - goalsAgainst}</div>
+                    <div className="points">{points}</div>
                   </div>
-                  <div className="matches-played">{wins + draws + loses}</div>
-                  <div className="wins">{wins}</div>
-                  <div className="draws">{draws}</div>
-                  <div className="loses">{loses}</div>
-                  <div className="goals-for">{goalsFor}</div>
-                  <div className="goals-against">{goalsAgainst}</div>
-                  <div className="goal-diff">{goalsFor - goalsAgainst}</div>
-                  <div className="points">{points}</div>
-                </div>
+                </Link>
               );
             },
           )}
