@@ -77,7 +77,8 @@ class App extends React.Component<RouteComponentProps, AppState> {
       location: { pathname },
     } = this.props;
     const urlArray = pathname.split('/');
-    const league = urlArray[urlArray.indexOf('league') + 1];
+    const league =
+      urlArray[urlArray.indexOf('league') + 1] || this.state.selectedLeague;
 
     this.setState({ selectedLeague: league }, () =>
       this.getAndSetTableData(league),
