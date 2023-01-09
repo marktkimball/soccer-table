@@ -6,7 +6,6 @@ import {
   withRouter,
   RouteComponentProps,
 } from "react-router-dom";
-import pickBy from "lodash/pickBy";
 import memoize from "memoize-one";
 import * as firebase from "firebase/app";
 
