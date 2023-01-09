@@ -1,28 +1,28 @@
-import filter from 'lodash/filter';
-import map from 'lodash/map';
-import reduce from 'lodash/reduce';
-import { Fixture, Matchday } from '../interfaces/match-day';
-import { TableStats } from '../interfaces/team-stats';
+import filter from "lodash/filter";
+import map from "lodash/map";
+import reduce from "lodash/reduce";
+import { Fixture, Matchday } from "../interfaces/match-day";
+import { TableStats } from "../interfaces/team-stats";
 
-export const mapFixtures = (matchdays: { [key: string]: Matchday }) =>
+export const mapFixtures = (matchdays: Array<Matchday>) =>
   reduce(
     matchdays,
     (allFixtures, { fixtures }) => {
-      const mappedFixtures = map(fixtures, fixture => fixture);
+      const mappedFixtures = map(fixtures, (fixture) => fixture);
       return allFixtures.concat(...mappedFixtures);
     },
-    [] as Fixture[],
+    [] as Fixture[]
   );
 
 export const getFilteredTeamFixtures = (fixtures: Fixture[], teamId: string) =>
   filter(
     fixtures,
-    fixture => fixture.homeTeamId === teamId || fixture.awayTeamId === teamId,
+    (fixture) => fixture.homeTeamId === teamId || fixture.awayTeamId === teamId
   );
 
 export const determineFixturePoints = (
   { goalsAway, goalsHome, homeTeamId, awayTeamId }: Fixture,
-  teamId: string,
+  teamId: string
 ): number => {
   if (goalsHome === goalsAway) {
     return 1;
@@ -40,7 +40,7 @@ export const determineFixturePoints = (
 
 export const getTeamGoalStats = (
   fixtures: Fixture[],
-  teamId: string,
+  teamId: string
 ): TableStats => {
   return fixtures.reduce(
     ({ draws, goalsAgainst, goalsFor, loses, points, wins }, fixture) => {
@@ -73,14 +73,11 @@ export const getTeamGoalStats = (
       loses: 0,
       points: 0,
       wins: 0,
-    },
+    }
   );
 };
 
-export const getTeamFixtures = (
-  teamId: string,
-  matchdays: { [key: string]: Matchday },
-) => {
+export const getTeamFixtures = (teamId: string, matchdays: Array<Matchday>) => {
   const allFixtures = mapFixtures(matchdays);
 
   const teamFixtures = getFilteredTeamFixtures(allFixtures, teamId);
@@ -92,6 +89,6 @@ export const getTeamFixtures = (
       }
 
       return 1;
-    },
+    }
   );
 };

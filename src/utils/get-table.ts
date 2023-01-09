@@ -2,18 +2,17 @@ import {
   getFilteredTeamFixtures,
   getTeamGoalStats,
   mapFixtures,
-} from './fixtures';
-import { Matchday } from '../interfaces/match-day';
-import { TeamStats } from '../interfaces/team-stats';
-import { Team } from '../interfaces/team';
+} from "./fixtures";
+import { Matchday } from "../interfaces/match-day";
+import { TeamStats } from "../interfaces/team-stats";
+import { Team } from "../interfaces/team";
 
 export const getTable = (
-  matchdays: { [key: string]: Matchday },
-  teams: { [key: string]: Team },
+  matchdays: Array<Matchday>,
+  teams: { [key: string]: Team }
 ): TeamStats[] => {
   const fixtures = mapFixtures(matchdays);
-
-  const teamStats = Object.keys(teams).map(teamId => {
+  const teamStats = Object.keys(teams).map((teamId) => {
     const teamFixtures = getFilteredTeamFixtures(fixtures, teamId);
     return { teamId: teamId, ...getTeamGoalStats(teamFixtures, teamId) };
   });
@@ -21,7 +20,7 @@ export const getTable = (
   return teamStats.sort(
     (
       { points: pointsA, goalsFor: goalsForA, goalsAgainst: goalsAgainstA },
-      { points: pointsB, goalsFor: goalsForB, goalsAgainst: goalsAgainstB },
+      { points: pointsB, goalsFor: goalsForB, goalsAgainst: goalsAgainstB }
     ) => {
       const teamAGoalDiff = goalsForA - goalsAgainstA;
       const teamBGoalDiff = goalsForB - goalsAgainstB;
@@ -47,6 +46,6 @@ export const getTable = (
       }
 
       return 1;
-    },
+    }
   );
 };

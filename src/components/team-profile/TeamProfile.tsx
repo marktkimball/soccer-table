@@ -1,21 +1,21 @@
-import React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import * as firebase from 'firebase/app';
+import React from "react";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import * as firebase from "firebase/app";
 
-import './team-profile.css';
+import "./team-profile.css";
 
-import { SparklineChart } from '../sparkline-chart/sparkline-chart';
-import groundIcon from '../../assets/icons/ground.svg';
-import mapPinIcon from '../../assets/icons/map-pin.svg';
-import { Matchday } from '../../interfaces/match-day';
-import { Team } from '../../interfaces/team';
-import { TeamStats } from '../../interfaces/team-stats';
-import { getTeamFixtures, getTeamGoalStats } from '../../utils/fixtures';
-import { getLeagueName } from '../../utils/league';
+import { SparklineChart } from "../sparkline-chart/sparkline-chart";
+import groundIcon from "../../assets/icons/ground.svg";
+import mapPinIcon from "../../assets/icons/map-pin.svg";
+import { Matchday } from "../../interfaces/match-day";
+import { Team } from "../../interfaces/team";
+import { TeamStats } from "../../interfaces/team-stats";
+import { getTeamFixtures, getTeamGoalStats } from "../../utils/fixtures";
+import { getLeagueName } from "../../utils/league";
 
 interface TeamProfileProps {
   league: string;
-  matchdays: { [key: string]: Matchday };
+  matchdays: Array<Matchday>;
   normalTable: TeamStats[];
   onBackClick: () => void;
   teams: { [key: string]: Team };
@@ -26,7 +26,7 @@ interface TeamProfileState {
 }
 
 const ordinalPlacement = (placement: number) => {
-  const s = ['th', 'st', 'nd', 'rd'];
+  const s = ["th", "st", "nd", "rd"];
   const v = placement % 100;
   return placement + (s[(v - 20) % 10] || s[v] || s[0]);
 };
@@ -41,8 +41,8 @@ class TeamProfile extends React.Component<
     const {
       location: { pathname },
     } = this.props;
-    const urlArray = pathname.split('/');
-    const teamId = urlArray[urlArray.indexOf('team') + 1];
+    const urlArray = pathname.split("/");
+    const teamId = urlArray[urlArray.indexOf("team") + 1];
     const team = this.props.teams[teamId];
 
     this.state = {
@@ -55,17 +55,17 @@ class TeamProfile extends React.Component<
     const deg = Math.floor(Math.random() * 360);
 
     document.getElementsByTagName(
-      'body',
+      "body"
     )[0].style.background = `linear-gradient(${deg}deg, ${team.primaryColor} 0%, #fff 70%, ${team.secondaryColor} 100%)`;
 
-    firebase.analytics().logEvent('select_team', {
+    firebase.analytics().logEvent("select_team", {
       teamName: team.displayName,
       teamId: team.id,
     });
   }
 
   componentWillUnmount() {
-    document.getElementsByTagName('body')[0].style.background = '';
+    document.getElementsByTagName("body")[0].style.background = "";
   }
 
   render() {
@@ -80,7 +80,7 @@ class TeamProfile extends React.Component<
       (
         { fixtures, points },
         { goalsAway, goalsHome, homeTeamId, ...rest },
-        i,
+        i
       ) => {
         const isHomeTeam = homeTeamId === team.id;
         const currentPoints = points[i - 1] || 0;
@@ -94,7 +94,7 @@ class TeamProfile extends React.Component<
             goalsHome,
             homeTeamId,
             isHomeTeam,
-            result: 'W',
+            result: "W",
             ...rest,
           });
           points.push(currentPoints + 3);
@@ -104,7 +104,7 @@ class TeamProfile extends React.Component<
             goalsHome,
             homeTeamId,
             isHomeTeam,
-            result: 'D',
+            result: "D",
             ...rest,
           });
           points.push(currentPoints + 1);
@@ -114,7 +114,7 @@ class TeamProfile extends React.Component<
             goalsHome,
             homeTeamId,
             isHomeTeam,
-            result: 'L',
+            result: "L",
             ...rest,
           });
           points.push(currentPoints);
@@ -122,31 +122,31 @@ class TeamProfile extends React.Component<
 
         return { fixtures, points };
       },
-      { fixtures: [] as any[], points: [] as number[] },
+      { fixtures: [] as any[], points: [] as number[] }
     );
 
     const pointsArray = [];
     const maxPointsArray: number[] = [];
-    const leagueGamesCount = league === 'germany' ? 34 : 38;
+    const leagueGamesCount = league === "germany" ? 34 : 38;
 
     for (let i = 0; i < leagueGamesCount; i++) {
       if (i === 0) {
         const startingMaxPoints =
           results.points[0] === 3 ? 114 : results.points[0] === 1 ? 112 : 111;
         maxPointsArray.push(
-          league === 'germany' ? startingMaxPoints - 12 : startingMaxPoints,
+          league === "germany" ? startingMaxPoints - 12 : startingMaxPoints
         );
       } else {
         const pointsToDeduct = !results.fixtures[i]
           ? 0
-          : results.fixtures[i].result === 'W'
+          : results.fixtures[i].result === "W"
           ? 0
-          : results.fixtures[i].result === 'L'
+          : results.fixtures[i].result === "L"
           ? 3
           : 2;
         maxPointsArray.push(maxPointsArray[i - 1] - pointsToDeduct);
       }
-      if (typeof results.points[i] === 'number') {
+      if (typeof results.points[i] === "number") {
         pointsArray.push(results.points[i]);
       } else {
         const lastGameIndex = results.fixtures.length - 1;
@@ -223,8 +223,8 @@ class TeamProfile extends React.Component<
                 return (
                   <div key={id} className="fixture-row">
                     <p className="fixture-row-item fixture-row-date">
-                      {`${date.toLocaleString('default', {
-                        month: 'short',
+                      {`${date.toLocaleString("default", {
+                        month: "short",
                       })} ${date.getDate()}`}
                     </p>
                     <div className="fixture-row-result">
@@ -237,7 +237,7 @@ class TeamProfile extends React.Component<
                     </div>
                   </div>
                 );
-              },
+              }
             )}
           </div>
         </div>

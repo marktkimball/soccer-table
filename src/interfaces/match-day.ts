@@ -7,7 +7,7 @@ export interface Matchday {
 }
 
 export interface Fixture {
-  id: string;
+  id?: string;
   kickOffTime: string;
   homeTeamId: string;
   awayTeamId: string;
